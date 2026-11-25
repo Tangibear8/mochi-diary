@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>麻糬漏餡日記</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#f6ecf2">
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 交換日記，軟軟的、有點蠢、但認真記事
+   IDEA: 粉紫色手帳，兩種墨水（鬧鬧粉、麻糬花生色），紙膠帶貼著每一頁
+   PICTURE: 一顆漏花生餡的麻糬當封面主角；翻開的那一頁就是主畫面
+   COLOUR and TYPE: 麻糬粉白底、深梅色字、花生琥珀＋鬧鬧粉兩色墨水、薰衣草紙膠帶；霞鶩文楷＋思源宋體粗
+   LAYOUT: 小標題列＋工具列，下面一本攤開的頁，再下面是目錄 */
+:root{color-scheme:light dark;
+--bg:light-dark(#f6ecf2,#1b131f);--paper:light-dark(#fffafc,#271c2c);--ink:light-dark(#2d1f2c,#f3e7ef);
+--muted:light-dark(#8a7484,#b9a3b5);--line:light-dark(#eedbe5,#3a2c40);--rule:light-dark(#f3e3eb,#30243a);
+--nao:light-dark(#d23f7c,#ff8fbd);--mochi:light-dark(#9a6410,#f0b552);--tape:light-dark(#d3c1f3,#5d4a8c);
+--star:light-dark(#e2a21a,#ffc94a);--shadow:light-dark(rgba(120,60,100,.14),rgba(0,0,0,.45))}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 "LXGW WenKai TC","Noto Serif TC",serif;overflow-x:clip}
+button,input,textarea{font:inherit;color:inherit}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(18px,4vw,40px) max(4vw,14px) 60px}
+header{display:flex;align-items:center;gap:18px}
+header svg{width:clamp(96px,18vw,140px);flex:none}
+h1{font:900 clamp(32px,6vw,46px)/1.05 "Noto Serif TC",serif;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0;font-size:16px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 14px;align-items:center}
+.btn{min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:var(--paper);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--tape)}.btn:focus-visible,.chip:focus-within,input:focus-visible,textarea:focus-visible{outline:2.5px solid var(--nao);outline-offset:2px}
+.btn.main{background:var(--nao);border-color:var(--nao);color:#fff;font-weight:700}
+.btn.on{background:var(--star);border-color:var(--star);color:#2d1f2c}
+.search{flex:1 1 160px;min-height:44px;border-radius:22px;border:1.5px solid var(--line);background:var(--paper);padding:0 16px;font-size:16px}
+.page{position:relative;background:var(--paper);border-radius:6px 18px 18px 6px;box-shadow:0 14px 34px var(--shadow);padding:clamp(26px,5vw,46px) clamp(20px,5vw,48px) 30px;
+background-image:repeating-linear-gradient(transparent 0 33px,var(--rule) 33px 34px);background-position:0 14px;border-left:10px solid var(--tape);min-height:360px}
+.page::before{content:"";position:absolute;top:-12px;left:36%;width:120px;height:26px;background:var(--tape);opacity:.75;transform:rotate(-3deg);border-radius:3px}
+.phead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin-bottom:10px}
+.pdate{font:900 clamp(26px,5vw,34px)/1.1 "Noto Serif TC",serif}
+.who{font-size:15px;padding:2px 12px;border-radius:14px;border:1.5px solid currentColor;white-space:nowrap}
+.ink-naonao{color:var(--nao)}.ink-mochi{color:var(--mochi)}
+.bigstar{color:var(--star);font-size:22px}
+.sec{margin:16px 0 0}.sec h3{font:700 14px/1.4 "LXGW WenKai TC",serif;color:var(--muted);margin:0 0 2px}
+.sec p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.quote{font-size:21px;line-height:1.6;padding-left:14px;border-left:4px solid currentColor}
+.quote small{display:block;font-size:14px;margin-top:4px}
+.mood{font-size:30px;line-height:1}.mood span{font-size:17px;vertical-align:middle;margin-left:8px;color:var(--ink)}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:6px}
+.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:zoom-in;background:var(--rule);transform:rotate(var(--r,0deg));box-shadow:0 4px 10px var(--shadow)}
+.pfoot{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-top:26px}
+.nav{display:flex;gap:8px}.nav .btn{min-width:48px;font-size:20px;padding:0 12px}
+.small{font-size:14px;color:var(--muted)}
+.state{text-align:center;color:var(--muted);padding:60px 10px}
+h2{font:700 22px/1.3 "Noto Serif TC",serif;margin:38px 0 10px}
+.toc{list-style:none;margin:0;padding:0;border-top:1.5px dashed var(--line)}
+.toc li{border-bottom:1.5px dashed var(--line)}
+.toc button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:7.4em 1.6em minmax(0,1fr) 1.4em;gap:8px;width:100%;padding:12px 6px;cursor:pointer;align-items:baseline}
+.toc button:focus-visible{outline:2.5px solid var(--nao)}
+.toc .d{white-space:nowrap;font-weight:700}.toc .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toc li.cur button{background:var(--rule);border-radius:8px}
+.over{position:fixed;inset:0;background:rgba(30,15,30,.55);display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;z-index:9}
+.over.open{display:flex}
+.box{background:var(--paper);border-radius:18px;max-width:640px;width:100%;padding:24px clamp(16px,4vw,30px);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.box h2{margin:0 0 12px}
+label.f{display:block;margin:14px 0 4px;font-weight:700;font-size:15px;color:var(--muted)}
+textarea,.box input[type=date],.box input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:10px 12px;font-size:16px}
+textarea{min-height:90px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:22px;border:1.5px solid var(--line);background:var(--bg)}
+.chip input:checked+span{border-color:var(--nao);background:var(--nao);color:#fff}
+.moods .chip span{font-size:24px;padding:0 10px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.thumbs div{position:relative;width:84px;height:84px}.thumbs img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.thumbs button{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:22px}
+.trash li{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1.5px dashed var(--line)}
+.light img{max-width:94vw;max-height:88vh;border-radius:12px;margin:auto}
+.note{color:var(--muted);font-size:14px;margin-top:30px;text-align:center}
+.err{color:var(--nao);font-size:15px;min-height:1.4em;margin-top:8px}
+.dots{display:flex;gap:16px;justify-content:center;margin:18px 0}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--nao)}.dots i.on{background:var(--nao)}
+.keys{display:grid;grid-template-columns:repeat(3,68px);gap:16px 22px;justify-content:center}
+.keys button{height:68px;width:68px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);font-size:24px;cursor:pointer;box-shadow:0 4px 10px var(--shadow)}
+.keys button:active{background:var(--rule)}
+@media(max-width:600px){header{gap:12px}.toc button{grid-template-columns:6.6em 1.4em minmax(0,1fr) 1.2em;font-size:16px}}
+@media(prefers-reduced-motion:no-preference){.page.flip{animation:flip .38s ease}@keyframes flip{from{opacity:0;transform:translateX(18px) rotate(.6deg)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<svg viewBox="0 0 160 130" role="img" aria-label="漏出花生餡的麻糬">
+<defs><radialGradient id="mg" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#fbe9f1"/><stop offset="1" stop-color="#efc9da"/></radialGradient>
+<linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d79b3d"/><stop offset="1" stop-color="#9a6410"/></linearGradient></defs>
+<ellipse cx="80" cy="118" rx="56" ry="7" fill="#000" opacity=".12"/>
+<path d="M22 108 C14 70 40 34 80 34 C120 34 146 70 138 108 C120 118 40 118 22 108Z" fill="url(#mg)" stroke="#e7b8cc" stroke-width="2"/>
+<path d="M120 96 C132 98 136 108 130 116 C126 122 120 118 121 112 C122 106 116 104 120 96Z" fill="url(#pg)"/>
+<circle cx="128" cy="124" r="3.4" fill="#b37a22"/>
+<ellipse cx="60" cy="52" rx="16" ry="7" fill="#fff" opacity=".8" transform="rotate(-18 60 52)"/>
+<circle cx="62" cy="78" r="4.6" fill="#2d1f2c"/><circle cx="98" cy="78" r="4.6" fill="#2d1f2c"/>
+<circle cx="63.6" cy="76.4" r="1.4" fill="#fff"/><circle cx="99.6" cy="76.4" r="1.4" fill="#fff"/>
+<ellipse cx="50" cy="90" rx="8" ry="4.6" fill="#f49bbd" opacity=".7"/><ellipse cx="110" cy="90" rx="8" ry="4.6" fill="#f49bbd" opacity=".7"/>
+<path d="M73 88 Q80 95 87 88" fill="none" stroke="#2d1f2c" stroke-width="2.6" stroke-linecap="round"/>
+</svg>
+<div><h1>麻糬漏餡日記</h1><p class="sub">🍡 小麻糬 × 🐣 小鬧鬧・記憶漏出來的地方</p></div>
+</header>
+
+<section id="door" hidden>
+<p class="sub" style="text-align:center;margin-top:28px">按門鈴開日記 🔑</p>
+<div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+<div class="keys" id="keys"></div>
+<p class="err" id="pinErr" style="text-align:center"></p>
+</section>
+
+<div id="inside" hidden>
+<div class="tools">
+<button class="btn main" id="b-new">✎ 寫今天</button>
+<button class="btn" id="b-rand">↻ 再翻一次</button>
+<button class="btn" id="b-big" aria-pressed="false">⭐ 只看大事</button>
+<input class="search" id="q" type="search" placeholder="找一件事…" aria-label="搜尋日記">
+<button class="btn" id="b-trash">紙簍</button>
+</div>
+
+<main id="book"><div class="state">翻開中…</div></main>
+
+<h2 id="toc-h" hidden>目錄</h2>
+<ul class="toc" id="toc"></ul>
+<p class="note">刪掉的會先丟進紙簍，五天後才真的不見。<br>🍡 Gabriel 小麻糬 · 2026/11/26</p>
+</div>
+</div>
+
+<div class="over" id="ed"><form class="box" id="form">
+<h2 id="ed-h">寫今天</h2>
+<label class="f" for="f-date">日期</label><input type="date" id="f-date" required>
+<label class="f">誰在寫</label>
+<div class="chips"><label class="chip"><input type="radio" name="author" value="mochi" checked><span>🍡 小麻糬</span></label><label class="chip"><input type="radio" name="author" value="naonao"><span>🐣 小鬧鬧</span></label></div>
+<label class="f">大事嗎</label>
+<div class="chips"><label class="chip"><input type="checkbox" id="f-big"><span>⭐ 這是大事</span></label></div>
+<label class="f" for="f-events">今天的大事</label><textarea id="f-events"></textarea>
+<label class="f" for="f-quote">那句話</label><textarea id="f-quote" style="min-height:60px"></textarea>
+<label class="f">這句是誰說的？</label>
+<div class="chips"><label class="chip"><input type="radio" name="qby" value="naonao"><span>小鬧鬧說的</span></label><label class="chip"><input type="radio" name="qby" value="mochi"><span>小麻糬說的</span></label></div>
+<label class="f">心情</label>
+<div class="chips moods" id="moods"></div>
+<input type="text" id="f-moodtext" placeholder="多說一點心情（可以不寫）" style="margin-top:8px">
+<label class="f" for="f-more">想多寫的</label><textarea id="f-more"></textarea>
+<label class="f">照片</label>
+<input type="file" id="f-photo" accept="image/*" multiple hidden>
+<button type="button" class="btn" id="b-photo">＋ 放照片</button>
+<div class="thumbs" id="thumbs"></div>
+<div class="err" id="err"></div>
+<div class="row"><button type="button" class="btn" id="b-cancel">先不要</button><button type="submit" class="btn main" id="b-save">放進日記</button></div>
+</form></div>
+
+<div class="over" id="tr"><div class="box"><h2>紙簍</h2><ul class="trash" id="trash-list" style="list-style:none;padding:0;margin:0"></ul>
+<div class="row"><button class="btn" id="b-trclose">闔上</button></div></div></div>
+
+<div class="over light" id="lb"><img id="lb-img" alt="日記裡的照片"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+{
+const SB_URL='https://vswbifqhvcwbtyjcgpws.supabase.co';
+const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzd2JpZnFodmN3YnR5amNncHdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NzM0MjUsImV4cCI6MjA5NjU0OTQyNX0.WeQYPzT5J6jvWRq13mp_22-mbcD48k-VkWMtYK45Afo';
+const sb=supabase.createClient(SB_URL,ANON,{auth:{persistSession:true,autoRefreshToken:true,storageKey:'mochi-diary-auth'}});
+const MOODS=["🤣","🥹","🩷","😈","🥳","😤","🫠","😴","🙃","🍡"];
+const WHO={mochi:"🍡 小麻糬",naonao:"🐣 小鬧鬧"};
+const WD=["日","一","二","三","四","五","六"];
+const DAY=864e5;
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei"}).format(new Date());
+const fmtDate=d=>{const [y,m,dd]=String(d).split("-");const w=new Date(Date.UTC(+y,+m-1,+dd)).getUTCDay();return `${y}/${m}/${dd}・週${WD[w]??""}`};
+let all=[],photos=[],view=[],cur=0,onlyBig=false,editing=null,keepPh=[],newPh=[],dropPh=new Set();
+const imgCache=new Map();
+
+/* ── 門 ── */
+let pin='';
+function drawDots(){document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<pin.length))}
+$('#keys').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(v=>`<button type="button" data-k="${v}" ${v?'':'style="visibility:hidden"'} aria-label="${v==='⌫'?'刪一格':v}">${v}</button>`).join('');
+$('#keys').onclick=ev=>{const b=ev.target.closest('[data-k]');if(!b)return;const v=b.dataset.k;
+  if(v==='⌫'){pin=pin.slice(0,-1);drawDots();return}
+  if(v&&pin.length<4){pin+=v;drawDots();if(pin.length===4)tryPin()}};
+async function tryPin(){
+  $('#pinErr').textContent='開門中…';
+  try{
+    const res=await fetch(SB_URL+'/functions/v1/pin-login',{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+ANON},body:JSON.stringify({pin})});
+    const j=await res.json().catch(()=>({}));
+    if(!res.ok||!j.access_token){$('#pinErr').textContent=j.error||'開不了門';pin='';drawDots();return}
+    await sb.auth.setSession({access_token:j.access_token,refresh_token:j.refresh_token});
+    pin='';$('#pinErr').textContent='';openBook();
+  }catch(e){$('#pinErr').textContent='網路不太穩，再按一次';pin='';drawDots()}
+}
+function showDoor(){$('#door').hidden=false;$('#inside').hidden=true}
+async function openBook(){$('#door').hidden=true;$('#inside').hidden=false;await load()}
+
+/* ── 讀 ── */
+async function load(keepId){
+  const [e,p]=await Promise.all([
+    sb.from('mochi_diary').select('id,day,author,star,big,quote,quote_by,mood,mood_note,body,created_at,deleted_at').order('day',{ascending:false}).order('created_at',{ascending:false}),
+    sb.from('mochi_diary_photos').select('id,entry_id,sort,deleted_at').order('sort').order('id')
+  ]);
+  if(e.error){$('#book').innerHTML=`<div class="state">讀不到：${esc(e.error.message)}</div>`;
+    if(/JWT|auth|permission/i.test(e.error.message)){await sb.auth.signOut();showDoor()}return}
+  all=e.data||[];photos=p.data||[];rebuild(keepId);
+}
+function live(){return all.filter(e=>!e.deleted_at)}
+function phOf(id){return photos.filter(p=>p.entry_id===id&&!p.deleted_at)}
+function rebuild(keepId){
+  const q=$('#q').value.trim();
+  const prev=keepId??view[cur]?.id;
+  view=live().filter(e=>(!onlyBig||e.star)&&(!q||[e.big,e.quote,e.mood_note,e.body,e.day].join(' ').includes(q)));
+  const i=view.findIndex(e=>e.id===prev);cur=i>=0?i:Math.min(cur,Math.max(view.length-1,0));
+  render();
+}
+function img(pid){
+  if(!imgCache.has(pid))imgCache.set(pid,sb.from('mochi_diary_photos').select('data,mime').eq('id',pid).single().then(({data})=>data?`data:${data.mime};base64,${data.data}`:''));
+  return imgCache.get(pid);
+}
+function fillImgs(root){root.querySelectorAll('img[data-pid]').forEach(async im=>{const s=await img(+im.dataset.pid);if(s)im.src=s})}
+function sec(t,body){return body?`<div class="sec"><h3>${t}</h3><p>${body}</p></div>`:""}
+function render(anim){
+  const book=$('#book');
+  if(!live().length){book.innerHTML=`<div class="page"><div class="state">日記本還是空的。按「✎ 寫今天」寫第一頁吧。</div></div>`;$('#toc').innerHTML='';$('#toc-h').hidden=true;drawBinBtn();return}
+  if(!view.length){book.innerHTML=`<div class="page"><div class="state">找不到這件事。</div></div>`}
+  else{
+    const e=view[cur],ink='ink-'+(e.author==='naonao'?'naonao':'mochi'),qink='ink-'+(e.quote_by==='naonao'?'naonao':'mochi');
+    const ph=phOf(e.id).map((p,i)=>`<img data-pid="${p.id}" alt="照片 ${i+1}" style="--r:${(i%3-1)*2}deg">`).join('');
+    book.innerHTML=`<article class="page${anim?' flip':''}">
+<div class="phead"><span class="pdate">${esc(fmtDate(e.day))}</span><span class="who ${ink}">${esc(WHO[e.author]||WHO.mochi)} 寫的</span>${e.star?'<span class="bigstar" title="大事">⭐</span>':''}</div>
+<div class="${ink}">${sec('今天的大事',esc(e.big))}</div>
+${e.quote?`<div class="sec"><h3>那句話</h3><p class="quote ${qink}">「${esc(e.quote)}」${e.quote_by?`<small>— ${e.quote_by==='naonao'?'小鬧鬧說的':'小麻糬說的'}</small>`:''}</p></div>`:''}
+${e.mood||e.mood_note?`<div class="sec"><h3>心情</h3><p class="mood">${esc(e.mood||'')}<span>${esc(e.mood_note||'')}</span></p></div>`:''}
+<div class="${ink}">${sec('想多寫的',esc(e.body))}</div>
+${ph?`<div class="sec"><h3>照片</h3><div class="photos">${ph}</div></div>`:''}
+<div class="pfoot"><div class="nav"><button class="btn" id="b-prev" aria-label="新一頁" ${cur===0?'disabled':''}>‹</button><button class="btn" id="b-next" aria-label="舊一頁" ${cur>=view.length-1?'disabled':''}>›</button></div>
+<span class="small">第 ${view.length-cur} / ${view.length} 頁</span>
+<div class="nav"><button class="btn" id="b-edit">✎ 改</button><button class="btn" id="b-del">丟紙簍</button></div></div><div id="delask" class="small" style="text-align:right"></div></article>`;
+    $('#b-prev').onclick=()=>go(cur-1);$('#b-next').onclick=()=>go(cur+1);
+    $('#b-edit').onclick=()=>openEd(e);$('#b-del').onclick=()=>askDel(e);
+    book.querySelectorAll('.photos img').forEach(im=>im.onclick=()=>{if(im.src){$('#lb-img').src=im.src;$('#lb').classList.add('open')}});
+    fillImgs(book);
+  }
+  $('#toc-h').hidden=!view.length;
+  $('#toc').innerHTML=view.map((e,i)=>`<li class="${i===cur?'cur':''}"><button data-i="${i}"><span class="d">${esc(String(e.day).replace(/-/g,'/'))}</span><span>${e.author==='naonao'?'🐣':'🍡'}</span><span class="t">${esc((e.big||e.quote||e.body||'').split('\n')[0])}</span><span>${e.star?'⭐':''}</span></button></li>`).join('');
+  drawBinBtn();
+}
+function go(i){if(i<0||i>=view.length)return;cur=i;render(true);$('#book').scrollIntoView({behavior:'smooth',block:'start'})}
+$('#toc').onclick=ev=>{const b=ev.target.closest('button[data-i]');if(b)go(+b.dataset.i)};
+document.addEventListener('keydown',ev=>{if(document.querySelector('.over.open')){if(ev.key==='Escape')closeAll();return}if(ev.target.matches('input,textarea'))return;if(ev.key==='ArrowLeft')go(cur-1);if(ev.key==='ArrowRight')go(cur+1)});
+$('#b-rand').onclick=()=>{if(view.length<2)return;let i;do{i=Math.floor(Math.random()*view.length)}while(i===cur);go(i)};
+$('#b-big').onclick=()=>{onlyBig=!onlyBig;$('#b-big').classList.toggle('on',onlyBig);$('#b-big').setAttribute('aria-pressed',onlyBig);cur=0;rebuild()};
+$('#q').oninput=()=>{cur=0;rebuild()};
+function closeAll(){document.querySelectorAll('.over').forEach(o=>o.classList.remove('open'))}
+$('#lb').onclick=closeAll;$('#b-cancel').onclick=closeAll;$('#b-trclose').onclick=closeAll;
+document.querySelectorAll('.over').forEach(o=>o.addEventListener('click',ev=>{if(ev.target===o)closeAll()}));
+
+/* ── 寫 ── */
+$('#moods').innerHTML=MOODS.map(m=>`<label class="chip"><input type="radio" name="mood" value="${m}"><span>${m}</span></label>`).join('');
+function setRadio(n,v){document.querySelectorAll(`input[name=${n}]`).forEach(r=>r.checked=r.value===v)}
+function getRadio(n){return document.querySelector(`input[name=${n}]:checked`)?.value||''}
+function drawThumbs(){
+  $('#thumbs').innerHTML=keepPh.filter(p=>!dropPh.has(p.id)).map(p=>`<div><img data-pid="${p.id}" alt="照片"><button type="button" data-drop="${p.id}" aria-label="拿掉這張">×</button></div>`).join('')
+    +newPh.map((b,i)=>`<div><img src="data:image/jpeg;base64,${b}" alt="新照片"><button type="button" data-new="${i}" aria-label="拿掉這張">×</button></div>`).join('');
+  fillImgs($('#thumbs'));
+}
+$('#thumbs').onclick=ev=>{const d=ev.target.closest('[data-drop]'),n=ev.target.closest('[data-new]');
+  if(d)dropPh.add(+d.dataset.drop);if(n)newPh.splice(+n.dataset.new,1);if(d||n)drawThumbs()};
+function openEd(e){
+  editing=e||null;$('#ed-h').textContent=e?'改這一頁':'寫今天';$('#err').textContent='';
+  $('#f-date').value=e?.day||today();setRadio('author',e?.author||'naonao');$('#f-big').checked=!!e?.star;
+  $('#f-events').value=e?.big||'';$('#f-quote').value=e?.quote||'';setRadio('qby',e?.quote_by||'');
+  setRadio('mood',e?.mood||'');$('#f-moodtext').value=e?.mood_note||'';$('#f-more').value=e?.body||'';
+  keepPh=e?phOf(e.id):[];newPh=[];dropPh=new Set();drawThumbs();
+  $('#ed').classList.add('open');$('#f-events').focus();
+}
+$('#b-new').onclick=()=>openEd(null);
+$('#b-photo').onclick=()=>$('#f-photo').click();
+function shrink(file){return new Promise((ok,bad)=>{const fr=new FileReader();fr.onerror=bad;fr.onload=()=>{const im=new Image();im.onerror=bad;im.onload=()=>{
+  const M=1400,s=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+  c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.84).split(',')[1])};im.src=fr.result};fr.readAsDataURL(file)})}
+$('#f-photo').onchange=async ev=>{$('#err').textContent='照片整理中…';
+  for(const f of ev.target.files){try{newPh.push(await shrink(f))}catch(_){$('#err').textContent='有一張讀不了'}}
+  ev.target.value='';if($('#err').textContent==='照片整理中…')$('#err').textContent='';drawThumbs()};
+$('#form').onsubmit=async ev=>{
+  ev.preventDefault();
+  const row={day:$('#f-date').value||today(),author:getRadio('author')||'naonao',star:$('#f-big').checked,
+    big:$('#f-events').value.trim()||null,quote:$('#f-quote').value.trim()||null,mood:getRadio('mood')||null,
+    mood_note:$('#f-moodtext').value.trim()||null,body:$('#f-more').value.trim()||null};
+  row.quote_by=row.quote?(getRadio('qby')||null):null;
+  if(!row.big&&!row.quote&&!row.body&&!newPh.length&&!(editing&&keepPh.length>dropPh.size)){$('#err').textContent='還是空的唷';return}
+  if(row.quote&&!row.quote_by){$('#err').textContent='那句話是誰說的？點一下上面的小圈圈';return}
+  const btn=$('#b-save');btn.disabled=true;$('#err').textContent='放進去中…';
+  try{
+    let id=editing?.id;
+    if(editing){const {error}=await sb.from('mochi_diary').update({...row,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error}
+    else{const {data,error}=await sb.from('mochi_diary').insert(row).select('id').single();if(error)throw error;id=data.id}
+    for(const pid of dropPh){await sb.from('mochi_diary_photos').update({deleted_at:new Date().toISOString()}).eq('id',pid)}
+    let i=0;for(const b64 of newPh){$('#err').textContent=`照片 ${++i}/${newPh.length}…`;
+      const {error}=await sb.from('mochi_diary_photos').insert({entry_id:id,data:b64,mime:'image/jpeg',sort:100+i});if(error)throw error}
+    closeAll();await load(id);
+  }catch(err){$('#err').textContent='沒存進去：'+(err.message||err)}
+  btn.disabled=false;
+};
+
+/* ── 紙簍 ── */
+function askDel(e){const c=$('#delask');c.innerHTML='丟進紙簍？五天內都拿得回來 <button class="btn" id="dy">好</button> <button class="btn" id="dn">不要</button>';
+  $('#dn').onclick=()=>c.innerHTML='';
+  $('#dy').onclick=async()=>{const {error}=await sb.from('mochi_diary').update({deleted_at:new Date().toISOString()}).eq('id',e.id);
+    if(error){c.textContent=error.message;return}e.deleted_at=new Date().toISOString();rebuild()}}
+function binItems(){return [...all.filter(x=>x.deleted_at).map(x=>({k:'e',x})),...photos.filter(p=>p.deleted_at&&!all.find(x=>x.id===p.entry_id)?.deleted_at).map(p=>({k:'p',x:p}))]}
+function drawBinBtn(){const n=binItems().length;$('#b-trash').textContent='紙簍'+(n?`（${n}）`:'')}
+function left(t){return Math.max(0,Math.ceil((Date.parse(t)+5*DAY-Date.now())/DAY))}
+function drawTrash(){
+  const items=binItems();
+  $('#trash-list').innerHTML=items.length?items.map(({k,x},i)=>{const e=k==='e'?x:all.find(a=>a.id===x.entry_id);
+    const title=k==='e'?(x.big||x.quote||x.body||'').slice(0,24):'一張照片';
+    return `<li><span><b>${esc(String(e?.day||'').replace(/-/g,'/'))}</b> ${esc(title)}<br><span class="small">還有 ${left(x.deleted_at)} 天</span></span><span class="nav"><button class="btn" data-r="${i}">拿回來</button><button class="btn" data-x="${i}">現在丟掉</button></span></li>`}).join(''):`<li class="small">紙簍是空的。</li>`;
+  $('#trash-list').onclick=async ev=>{const r=ev.target.closest('[data-r]'),x=ev.target.closest('[data-x]');const it=items[+(r||x)?.dataset[r?'r':'x']];if(!it)return;
+    const tb=it.k==='e'?'mochi_diary':'mochi_diary_photos';
+    if(r){const {error}=await sb.from(tb).update({deleted_at:null}).eq('id',it.x.id);if(!error)it.x.deleted_at=null}
+    if(x){if(x.dataset.sure!=='1'){x.dataset.sure='1';x.textContent='真的嗎？再按一次';return}
+      const {error}=await sb.from(tb).delete().eq('id',it.x.id);if(!error){if(it.k==='e')all=all.filter(a=>a.id!==it.x.id);else photos=photos.filter(p=>p.id!==it.x.id)}}
+    drawTrash();rebuild()};
+}
+$('#b-trash').onclick=()=>{drawTrash();$('#tr').classList.add('open')};
+
+let lastLoad=Date.now();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#inside').hidden&&!$('#ed').classList.contains('open')&&Date.now()-lastLoad>5000){lastLoad=Date.now();load()}});
+(async()=>{const {data}=await sb.auth.getSession();if(data?.session)openBook();else showDoor()})();
+}
+</script>
+
+</body>
+</html>
